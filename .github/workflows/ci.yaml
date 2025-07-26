@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{steps.setup.outputs.node-version}}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧹 Run Linter
+        run: npm run lint
+
+      - name: 🔧 Check Build
+        run: npm run build

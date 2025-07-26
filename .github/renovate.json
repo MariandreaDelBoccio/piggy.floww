@@ -1,0 +1,49 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "commitMessageAction": "update",
+  "commitMessageExtra": null,
+  "commitMessagePrefix": "DEPS-0 chore:",
+  "dependencyDashboard": false,
+  "timezone": "Europe/Madrid",
+  "schedule": ["every weekend"],
+  "reviewers": ["team:engineers"],
+  "ignorePaths": [".github/**"],
+  
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "k8s.io/component-base",
+        "k8s.io/apimachinery",
+        "k8s.io/client-go"
+      ],
+      "allowedVersions": "/^v0\\.[0-9]+\\.[0-9]+/"
+    },
+    {
+      "description": "Minor and patch-level updates",
+      "groupSlug": "all",
+      "groupName": "all dependencies",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest",
+        "rollback"
+      ]
+    },
+    {
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": "All Major",
+      "groupSlug": "all-major"
+    }
+  ]
+}

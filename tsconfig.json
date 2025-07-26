@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "types": ["vitest", "vitest/globals", "node"],
+    "target": "ES2021",
+    "lib": ["DOM", "ES2021"],
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
