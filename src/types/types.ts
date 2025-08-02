@@ -1,5 +1,41 @@
 import type { User } from "firebase/auth"
 import type { DocumentData, QueryDocumentSnapshot, Timestamp } from "firebase/firestore"
+import type { ReactNode } from "react";
+
+// BASE CONTAINER
+export interface BaseContainerProps {
+  children: ReactNode;
+  hasBackBtn?: boolean;
+  classes?: string;
+  title?: string | null;
+  route?: string;
+}
+
+// BASE BUTTON
+export interface BaseButtonProps {
+  onClick: (v: unknown) => void;
+  classes?: string;
+  hasIcon?: boolean;
+  children?: ReactNode;
+  text?: string;
+}
+
+// CATEGORY SELECTOR
+export interface Category {
+  id: string;
+  text: string;
+}
+
+export interface CategoryIconProps {
+  id: string;
+  className?: string;
+}
+
+export interface CategoriesSelectProps {
+  category: string;
+  changeCategory: (id: string) => void;
+}
+
 
 export interface ButtonProps {
     $primary?: boolean
@@ -52,16 +88,6 @@ export interface BalanceContextType {
   monthBoundaries?: MonthBoundaries | null;
   userSettings?: UserSettings | null;
   currentPeriod?: CurrentPeriod | null;
-}
-
-export type Category = {
-  text: string;
-  id: string;
-}
-
-export type CategoriesSelectProps = {
-  category: string;
-  changeCategory: (value: string) => void;
 }
 
 export type DatePickerProps = {

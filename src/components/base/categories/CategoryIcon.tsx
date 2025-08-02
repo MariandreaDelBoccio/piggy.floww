@@ -8,7 +8,7 @@ import {
   CreditCardIcon,
   FaceSmileIcon,
 } from "@heroicons/react/24/outline";
-import type { CategoryIconProps } from "../types/types";
+import type { CategoryIconProps } from "../../../types/types";
 
 const iconsMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   food: CakeIcon,               
