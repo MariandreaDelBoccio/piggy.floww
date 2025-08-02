@@ -22,8 +22,8 @@ export const BalanceProvider = ({ children }: { children: React.ReactNode }) => 
   // Budget entries from Firebase
   const [budgetEntries, setBudgetEntries] = useState<BudgetEntry[]>([]);
   
-  // Monthly expenses from hook (no monthly income needed)
-  const monthlyExpenses = useGetMonthlyExpense();
+  // Monthly expenses from hook - destructure the new return structure
+  const { expense: monthlyExpenses, monthBoundaries, userSettings } = useGetMonthlyExpense();
   
   // Calculated totals
   const [totalIncome, setTotalIncome] = useState<number>(0); // Only budget income
@@ -64,7 +64,7 @@ export const BalanceProvider = ({ children }: { children: React.ReactNode }) => 
     setTotalBudgetExpenses(budgetExpenses);
   }, [budgetEntries]);
 
-  // Calculate monthly expenses total
+  // Calculate monthly expenses total - updated to use the new structure
   useEffect(() => {
     const monthlyExpensesTotal = monthlyExpenses.reduce(
       (acc, expense) => acc + parseFloat(expense.quantity), 
@@ -83,7 +83,14 @@ export const BalanceProvider = ({ children }: { children: React.ReactNode }) => 
       totalIncome,
       totalExpenses,
       totalBudgetExpenses,
-      totalMonthlyExpenses
+      totalMonthlyExpenses,
+      monthBoundaries,
+      userSettings,
+      // Optionally add period info for debugging/display
+      currentPeriod: monthBoundaries ? {
+        start: new Date(monthBoundaries.startMonth * 1000),
+        end: new Date(monthBoundaries.endMonth * 1000)
+      } : null
     }}>
       {children}
     </BalanceContext.Provider>

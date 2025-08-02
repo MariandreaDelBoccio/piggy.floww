@@ -12,11 +12,12 @@ import Alert from "../elements/Alert";
 import EyeOff from "../assets/images/eye_off.svg?react";
 import EyeShow from "../assets/images/eye_show.svg?react";
 import useIsMobile from "../hooks/useIsMobile";
+import theme from "../theme";
 
 const Svg = styled.img`
-  width: 100%auto;
-  max-height: 6.25rem;
-  margin-bottom: 1.25rem;
+  margin: 1rem auto;
+  max-height: 5.25rem;
+  width: fit-content;
 `;
 
 const ShowPasswordBtn = styled.button`
@@ -36,7 +37,12 @@ const ShowPasswordBtn = styled.button`
 
 const PasswordWrapper = styled.div`
   position: relative;
-  width: 100%;
+  width: 20rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
 `;
 
 function SignUp() {
@@ -123,8 +129,14 @@ function SignUp() {
       <Header>
         <HeaderContainer>
           <Title>Sign Up</Title>
-          <div>
-            <Button to="/login">Login</Button>
+          <div className="flex justify-center">
+            <Button
+              to="/login"
+              $color={theme.grisClaro2}
+              $textColor={theme.colorSecundario}
+            >
+              Login
+            </Button>
           </div>
         </HeaderContainer>
       </Header>
@@ -153,19 +165,17 @@ function SignUp() {
           >
             {showFirstPassword ? (
               <EyeOff
-                style={
-                  isMobile
-                    ? { width: "2rem", height: "2rem" }
-                    : { width: "3rem", height: "3rem" }
-                }
+                style={{
+                  width: isMobile ? "1.5rem" : "1.8rem",
+                  height: isMobile ? "1.5rem" : "1.8rem",
+                }}
               />
             ) : (
               <EyeShow
-                style={
-                  isMobile
-                    ? { width: "2rem", height: "2rem" }
-                    : { width: "3rem", height: "3rem" }
-                }
+                  style={{
+                  width: isMobile ? "1.5rem" : "1.8rem",
+                  height: isMobile ? "1.5rem" : "1.8rem",
+                }}
               />
             )}
           </ShowPasswordBtn>
@@ -184,25 +194,29 @@ function SignUp() {
           >
             {showLastPassword ? (
               <EyeOff
-                style={
-                  isMobile
-                    ? { width: "2rem", height: "2rem" }
-                    : { width: "3rem", height: "3rem" }
-                }
+                style={{
+                  width: isMobile ? "1.5rem" : "1.8rem",
+                  height: isMobile ? "1.5rem" : "1.8rem",
+                }}
               />
             ) : (
               <EyeShow
-                style={
-                  isMobile
-                    ? { width: "2rem", height: "2rem" }
-                    : { width: "3rem", height: "3rem" }
-                }
+                style={{
+                  width: isMobile ? "1.5rem" : "1.8rem",
+                  height: isMobile ? "1.5rem" : "1.8rem",
+                }}
               />
             )}
           </ShowPasswordBtn>
         </PasswordWrapper>
         <ButtonContainer>
-          <Button as="button" to="/" $primary type="submit">
+          <Button
+            as="button"
+            to="/"
+            type="submit"
+            $color={theme.colorSecundario}
+            $width="20rem"
+          >
             Sign Up
           </Button>
         </ButtonContainer>

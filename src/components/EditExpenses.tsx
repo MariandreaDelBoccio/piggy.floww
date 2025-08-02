@@ -1,11 +1,9 @@
 import { Helmet } from "react-helmet-async"
 import { Header, Title } from "../elements/Header"
 import BackBtn from "../elements/BackBtn"
-import TotalBar from "./totalBar"
 import ExpensesForm from "./ExpensesForm"
 import { useParams } from "react-router-dom"
 import useGetExpense from "../hooks/useGetExpense"
-import BalanceBar from "./BalanceBar"
 
 function EditExpenses() {
     const { id } = useParams()
@@ -23,9 +21,6 @@ function EditExpenses() {
             </Header>
 
             <ExpensesForm expense={expense}/>
-
-            <BalanceBar />
-            <TotalBar />
         </>
     )
 }

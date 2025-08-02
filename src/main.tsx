@@ -20,6 +20,7 @@ import BudgetForm from "./components/BudgetForm.tsx";
 import BudgetList from "./components/BudgetList.tsx";
 import BudgetDetail from "./components/BudgetDetail.tsx";
 import { BalanceProvider } from "./context/BalanceProvider.tsx";
+import PrivateLayout from "./components/PrivateLayout.tsx";
 
 WebFont.load({
   google: {
@@ -34,14 +35,15 @@ createRoot(document.getElementById("root")!).render(
         <TotalAmountProvider>
           <BalanceProvider>
             <BrowserRouter>
-                <Routes>
-                  {/* Login */}
-                  <Route path="/login" element={<Login />} />
-                  {/* Sign Up */}
-                  <Route path="/sign-up" element={<SignUp />} />
+              <Routes>
+                {/* Login */}
+                <Route path="/login" element={<Login />} />
+                {/* Sign Up */}
+                <Route path="/sign-up" element={<SignUp />} />
 
-                  {/* Private routes */}
-                  <Route element={<PrivateRoute />}>
+                {/* Private routes */}
+                <Route element={<PrivateRoute />}>
+                  <Route element={<PrivateLayout />}>
                     {/* Expenses by ategories */}
                     <Route path="/categories" element={<CategoryExpenses />} />
                     {/* Expenses list */}
@@ -63,10 +65,11 @@ createRoot(document.getElementById("root")!).render(
                     {/* Budget List */}
                     <Route path="/budget/:id" element={<BudgetDetail />} />
                   </Route>
+                </Route>
 
-                  {/* Not found */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                {/* Not found */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
             </BrowserRouter>
           </BalanceProvider>
         </TotalAmountProvider>

@@ -11,12 +11,11 @@ const InputContainer = styled.div`
     input {
         font-family: 'Work Sans', sans-serif;
         box-sizing: border-box;
-        background: ${theme.grisClaro};
-        border: none;
+        border: 1px solid ${theme.grisClaro2};
         cursor: pointer;
         border-radius: 0.625rem; /* 10px */
-        height: 5rem; /* 80px */
-        width: 100%;
+        height: 3rem; /* 80px */
+        width: 20rem;
         padding: 0 1.25rem; /* 20px */
         font-size: 1.5rem; /* 24px */
         text-align: center;

@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth"
-import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore"
+import type { DocumentData, QueryDocumentSnapshot, Timestamp } from "firebase/firestore"
 
 export interface ButtonProps {
     $primary?: boolean
@@ -8,6 +8,7 @@ export interface ButtonProps {
     $color?: string
     $flat?: boolean
     $textColor?: string
+    $width?: string;
 }
 
 export interface AlertComponentProps {
@@ -22,8 +23,35 @@ export type AuthContextType = {
   loading: boolean;
 };
 
+interface UserSettings {
+  monthStartDay: number;
+  updatedAt?: Timestamp; 
+}
+
+interface MonthBoundaries {
+  startMonth: number;
+  endMonth: number;  
+}
+
 export type MonthlyAmountContextType = {
   total: number;
+  monthBoundaries?: MonthBoundaries | null;
+  userSettings?: UserSettings | null;
+}
+
+interface CurrentPeriod {
+  start: Date;
+  end: Date;
+}
+export interface BalanceContextType {
+  balance: number;
+  totalIncome: number;
+  totalExpenses: number;
+  totalBudgetExpenses: number;
+  totalMonthlyExpenses: number;
+  monthBoundaries?: MonthBoundaries | null;
+  userSettings?: UserSettings | null;
+  currentPeriod?: CurrentPeriod | null;
 }
 
 export type Category = {

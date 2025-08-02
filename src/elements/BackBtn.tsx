@@ -11,8 +11,7 @@ const Btn = styled.button`
     text-align: center;
     margin-right: 1.25rem; /* 20px */
     border: none;
-    background: #000;
-    color: #fff;
+    color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,7 +28,6 @@ const Btn = styled.button`
 const Icon = styled.img`
   width: 50%;
   height: auto;
-  filter: invert(100%); /* si necesitas hacerla blanca */
 `;
 
 const BackBtn = ({route = '/'}) => {

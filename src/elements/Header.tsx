@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 const Header = styled.div`
-  width: 100%;
-  padding: 2.5rem; /* 40px */
+  width: auto;
+  padding: 1.5rem; /* 40px */
   display: flex;
   justify-content: space-between;
   align-items: center;

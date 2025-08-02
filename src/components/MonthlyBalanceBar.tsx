@@ -2,6 +2,7 @@ import styled from "styled-components";
 import theme from "../theme";
 import formatCurrency from "../functions/currencyConvertion";
 import { useBalance } from "../hooks/useBalance";
+import useMonthlyTotal from "../hooks/useMonthlyTotal";
 
 const Bar = styled.div`
   background-color: ${theme.azulClaro};
@@ -23,11 +24,16 @@ const Bar = styled.div`
 
 export default function MonthlyBalanceBar() {
   const { balance } = useBalance();
+  const { total } = useMonthlyTotal();
 
   return (
     <Bar>
-      <p>Monthly balance:</p>
-      <p>{formatCurrency(balance)}</p>
+      <div>
+        <p>Monthly balance:</p>
+        <p>{formatCurrency(balance)}</p>
+        <p>Total expenses:</p>
+        <p>{formatCurrency(total)}</p>
+      </div>
     </Bar>
   );
 }

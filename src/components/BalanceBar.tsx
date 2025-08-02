@@ -1,45 +1,48 @@
-import styled from 'styled-components';
-import { useBalance } from '../hooks/useBalance';
-import formatCurrency from '../functions/currencyConvertion';
-import theme from '../theme';
+import styled from "styled-components";
+import { useBalance } from "../hooks/useBalance";
+import formatCurrency from "../functions/currencyConvertion";
+import useIsMobile from "../hooks/useIsMobile";
+import useMonthlyTotal from "../hooks/useMonthlyTotal";
+import theme from "../theme";
 
 const BalanceBarStyled = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: .7rem 2rem;
-  background-color: ${() => theme.azulClaro || '#007bff'};
-  color: white;
-  font-weight: bold;
-  
-  p {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-  
-  .balance-amount {
-    font-size: 1.3rem;
-  }
-`;
+  padding: 0.7rem 2rem;
+  flex: 1;
+  background: ${theme.rojo}
 
-const BalanceBarPositive = styled(BalanceBarStyled)`
-  background-color: #7bcc89d1; /* Verde para balance positivo */
-`;
+  @media (max-width: 31.25rem) {
+    justify-content: center!important;
 
-const BalanceBarNegative = styled(BalanceBarStyled)`
-  background-color: #dc3545; /* Rojo para balance negativo */
+    .balance-amount,
+    p {
+      font-size: 14px;
+    }
+  }
 `;
 
 const BalanceBar = () => {
   const { balance } = useBalance();
-  
-  const BarComponent = balance >= 0 ? BalanceBarPositive : BalanceBarNegative;
-  
+  const { total } = useMonthlyTotal();
+  const isMobile = useIsMobile();
+
   return (
-    <BarComponent>
-      <p>Available balance:</p>
-      <p className="balance-amount">{formatCurrency(balance)}</p>
-    </BarComponent>
+    <BalanceBarStyled>
+      <div className="mr-6">
+        <p className="font-light">
+          {!isMobile && "Available"} Balance:{" "}
+          <span className="font-medium">{formatCurrency(balance)}</span>
+        </p>
+      </div>
+      <div>
+        <p className="font-light">
+          Monthly expenses:{" "}
+          <span className="font-medium">{formatCurrency(total)}</span>
+        </p>
+      </div>
+    </BalanceBarStyled>
   );
 };
 

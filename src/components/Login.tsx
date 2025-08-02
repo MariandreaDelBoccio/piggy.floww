@@ -12,6 +12,7 @@ import Alert from "../elements/Alert";
 import EyeOff from "../assets/images/eye_off.svg?react";
 import EyeShow from "../assets/images/eye_show.svg?react";
 import useIsMobile from "../hooks/useIsMobile";
+import theme from "../theme";
 
 const Svg = styled.img`
   width: fit-content;
@@ -34,11 +35,27 @@ const ShowPasswordBtn = styled.button`
   transform: translateY(-50%);
   font-size: 0.9rem;
   color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
 const PasswordWrapper = styled.div`
   position: relative;
-  width: 100%;
+  width: 20rem;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+`;
+
+const PasswordInput = styled(Input)`
+  padding-right: 4rem !important; /* Espacio para el botón */
+  width: 20rem;
 `;
 
 function Login() {
@@ -97,8 +114,14 @@ function Login() {
       <Header>
         <HeaderContainer>
           <Title>Login</Title>
-          <div>
-            <Button to="/sign-up">Sign up</Button>
+          <div className="flex justify-center">
+            <Button
+              to="/sign-up"
+              $color={theme.grisClaro2}
+              $textColor={theme.colorSecundario}
+            >
+              Sign up
+            </Button>
           </div>
         </HeaderContainer>
       </Header>
@@ -115,7 +138,7 @@ function Login() {
         />
 
         <PasswordWrapper>
-          <Input
+          <PasswordInput
             type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
@@ -125,18 +148,30 @@ function Login() {
           <ShowPasswordBtn type="button" onClick={toggleShowPassword}>
             {showPassword ? (
               <EyeOff
-                style={isMobile ? { width: "2rem" } : { width: "3rem" }}
+                style={{
+                  width: isMobile ? "1.5rem" : "1.8rem",
+                  height: isMobile ? "1.5rem" : "1.8rem",
+                }}
               />
             ) : (
               <EyeShow
-                style={isMobile ? { width: "2rem" } : { width: "3rem" }}
+                style={{
+                  width: isMobile ? "1.5rem" : "1.8rem",
+                  height: isMobile ? "1.5rem" : "1.8rem",
+                }}
               />
             )}
           </ShowPasswordBtn>
         </PasswordWrapper>
 
         <ButtonContainer>
-          <Button as="button" to="/" $primary type="submit">
+          <Button
+            as="button"
+            to="/"
+            type="submit"
+            $color={theme.colorSecundario}
+            $width="20rem"
+          >
             Login
           </Button>
         </ButtonContainer>

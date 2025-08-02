@@ -1,21 +1,9 @@
 import { Helmet } from "react-helmet-async";
-import {
-  Header,
-  Title,
-  HeaderContainer,
-  ButtonContainer,
-} from "./elements/Header";
-import LogoutButton from "./elements/LogoutBtn";
 import ExpensesForm from "./components/ExpensesForm";
-import TotalBar from "./components/totalBar";
-import CatIcon from "./assets/images/cat_icon.svg?react";
-import ListIcon from "./assets/images/list_icon.svg?react";
-import PiggyBank from "./assets/images/piggy_bank.svg?react";
-import Money from "./assets/images/money.svg?react";
+import ExpensesList from "./components/ExpensesList";
 import useIsMobile from "./hooks/useIsMobile";
-import BalanceBar from "./components/BalanceBar";
-// import MobileMenu from "./components/MobileMenu";
-import Button from "./elements/Button";
+import theme from "./theme";
+import { FormContainer } from "./elements/FormElements";
 
 function App() {
   const isMobile = useIsMobile();
@@ -23,52 +11,45 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Add expenses</title>
+        <title>Expenses</title>
         <link rel="icon" type="image/x-icon" href="../public/favicon.ico" />
       </Helmet>
 
-      <div>
-        <Header>
-          <HeaderContainer>
-            <ButtonContainer>
-              <Button to="/categories">
-                {isMobile ? (
-                  <CatIcon style={{ width: "1.5rem", height: "1.5rem" }} />
-                ) : (
-                  <span>Categories</span>
-                )}
-              </Button>
-              <Button to="/list">
-                {isMobile ? (
-                  <ListIcon style={{ width: "1.5rem", height: "1.5rem" }} />
-                ) : (
-                  <span>Expenses</span>
-                )}
-              </Button>
-              <Button to="/money-box">
-                {isMobile ? (
-                  <PiggyBank style={{ width: "1.5rem", height: "1.5rem" }} />
-                ) : (
-                  <span>Piggy</span>
-                )}
-              </Button>
-              <Button to="/budget-list">
-                {isMobile ? (
-                  <Money style={{ width: "1.5rem", height: "1.5rem" }} />
-                ) : (
-                  <span>Budget</span>
-                )}
-              </Button>
-              <LogoutButton />
-            </ButtonContainer>
-          </HeaderContainer>
-        </Header>
-        <Title>Add expenses</Title>
+      <div className="flex" style={{ height: "90vh"}}>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col mt-xs lg:mt-0">
+          {/* Content */}
+          <div className="flex flex-1" style={{ background: theme.grisClaro }}>
+            {/* Form Section */}
+            <FormContainer
+              className={`${
+                isMobile 
+                  ? "w-full flex items-center justify-center p-4 bg-white my-4 mx-4" 
+                  : "w-1/3 p-8 bg-white my-6 ml-6 mr-0"
+              }`}
+            >
+              <div className="max-w-md mx-auto">
+                <ExpensesForm />
+              </div>
+            </FormContainer>
 
-        <ExpensesForm />
+            {/* List Section - Solo en desktop */}
+            {!isMobile && (
+              <FormContainer className="w-2/3 p-8 bg-white my-6 mx-6">
+                <div className="max-w-4xl mx-auto">
+                  <ExpensesList />
+                </div>
+              </FormContainer>
+            )}
+          </div>
+          {/* End Content */}
+
+          {/* Bottom bar */}
+          <div className="bg-white border-t border-gray-200 px-6">
+            <div className="max-w-4xl mx-auto space-y-4"></div>
+          </div>
+        </div>
       </div>
-      <BalanceBar />
-      <TotalBar />
     </>
   );
 }

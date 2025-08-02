@@ -3,17 +3,19 @@ import useGetMonthlyExpense from "./useGetMonthlyExpense";
 import type { CategoryKey, ExpensesByCategory } from "../types/types";
 
 const useGetExpenseByCat = () => {
-    const [expensesByCat, changeExpensesByCat] = useState<ExpensesByCategory>([])
-    const expenses = useGetMonthlyExpense()
+    const [expensesByCat, changeExpensesByCat] = useState<ExpensesByCategory>([]);
+    
+    // Destructure the new return structure from useGetMonthlyExpense
+    const { expense: expenses, monthBoundaries, userSettings } = useGetMonthlyExpense();
     
     useEffect(() => {
         const total = expenses.reduce((acc, expense) => {
             const currentCat = expense.category as CategoryKey;
             const currentQty = parseFloat(expense.quantity);
     
-            acc[currentCat] += currentQty
+            acc[currentCat] += currentQty;
     
-            return acc
+            return acc;
         }, {
             'food': 0,
             'debt': 0,
@@ -23,7 +25,7 @@ const useGetExpenseByCat = () => {
             'health': 0,
             'shopping': 0,
             'fun': 0
-        } as Record<CategoryKey, number>)
+        } as Record<CategoryKey, number>);
     
         const data: ExpensesByCategory = Object.keys(total).map((key) => ({
             category: key as CategoryKey,
@@ -31,10 +33,19 @@ const useGetExpenseByCat = () => {
         }));
     
         changeExpensesByCat(data);
-    }, [expenses])
+    }, [expenses]);
     
-    return expensesByCat;
-    
-}
+    // Optionally return additional information
+    return {
+        expensesByCat,
+        monthBoundaries,
+        userSettings,
+        // Helper to get period info
+        currentPeriod: monthBoundaries ? {
+            start: new Date(monthBoundaries.startMonth * 1000),
+            end: new Date(monthBoundaries.endMonth * 1000)
+        } : null
+    };
+};
 
 export default useGetExpenseByCat;

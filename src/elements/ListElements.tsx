@@ -20,11 +20,11 @@ const List = styled.ul`
 `;
  
 const ElementList = styled.li`
-    padding: 1.25rem 0; /* 20px */
-    border-bottom: 2px solid #F2F2F2;
-    display: grid;
-    gap: 0.31rem; /* 5px */
-    justify-content: space-between;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    background: ${theme.grisBackground};
+    border-radius: 0.625rem;
+    display: flex;
  
     & > div {
         width: 100%;
@@ -61,10 +61,12 @@ const Category = styled.div`
     align-items: center;
     
     svg {
-        width: 3.12rem; /* 50px */
+        width: 2rem; 
+        padding: .25rem;
         height: auto;
         margin-right: 1.25rem; /* 20px */
-        border-radius: 0.62rem; /* 10px */
+        border-radius: 50%;
+        background: ${theme.grisClaro2}
     }
  
     @media (max-width: 50rem) { /* 80px */
@@ -82,8 +84,8 @@ const Description = styled.div`
 `;
  
 const Value = styled.div`
-    font-size: 1.25rem; /* 20px */
-    font-weight: 700;
+    font-size: 1.15rem; /* 20px */
+    font-weight: 500;
     justify-content: end;
  
     @media (max-width: 50rem) { /* 80px */
@@ -92,12 +94,11 @@ const Value = styled.div`
 `;
  
 const Date = styled.div`
-    border-radius: 0.31rem; /* 5px */
-    background: ${theme.azulClaro};
     text-align: center;
-    color: #fff;
-    padding: 0.62rem 3.12rem; /* 10px 50px */
-    display: inline-block;
+    font-weight: bold;
+    color: ${theme.colorSecundario};
+    padding: 0.62rem 3.12rem 0.62rem 0; 
+    display: inline-block; 
     margin: 1.25rem 0; /* 20px */
  
     @media (max-width: 50rem) { /* 80px */
@@ -113,12 +114,11 @@ const ButtonContainer = styled.div`
  
 const ActionButton = styled.button`
     outline: none;
-    background: ${theme.grisClaro};
     border: none;
-    width: 2.5rem; /* 40px */
+    width: 1.5rem;
     display: inline-block;
-    height: 2.5rem; /* 40px */
-    line-height: 2.5rem; /* 40px */
+    height: 2.5rem;
+    line-height: 2.5rem;
     font-size: 16px;
     cursor: pointer;
     border-radius: 0.31rem; /* 5px */
@@ -133,7 +133,8 @@ const ActionButton = styled.button`
     }
  
     svg {
-        width: 1.125rem; /* 18px */
+        width: 1rem;
+        color: ${theme.grisClaro}
     }
  
     @media (max-width: 50rem) { /* 80px */

@@ -16,7 +16,7 @@ const buttonColor = (props: ButtonProps) => {
 
 const Button = styled(Link)<ButtonProps>`
   background: ${(props) => buttonColor(props)};
-  width: ${(props) => (props.$hasIcon ? "fit-content" : "auto")}; /* 250px */
+  width: ${(props) => (props.$width ? props.$width : "auto")}; 
   border: none;
   border-radius: 0.625rem; /* 10px */
   color: ${(props) => (props.$textColor ? props.$textColor : "#fff")};
@@ -34,7 +34,6 @@ const Button = styled(Link)<ButtonProps>`
   margin: 5px;
 
   svg {
-    height: ${(props) => (props.$bigIcon ? "100%" : "0.75rem;")}; /* 12px */
     fill: white;
   }
 `;

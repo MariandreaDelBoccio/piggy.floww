@@ -6,19 +6,20 @@ import type { CategoriesSelectProps, Category } from "../types/types";
 import CategoryICon from "../elements/CategoryIcons";
 
 const SelectContainer = styled.div`
-  background: ${theme.grisClaro};
   cursor: pointer;
   border-radius: 0.625rem; /* 10px */
   position: relative;
-  height: 5rem; /* 80px */
-  width: 20%;
+  height: 3rem; /* 80px */
+  width: 20rem;
   padding: 0px 1.25rem; /* 20px */
   font-size: 1.5rem; /* 24px */
   text-align: center;
   display: flex;
   align-items: center;
   transition: 0.5s ease all;
+  background: #fff;
   margin-bottom: 1rem;
+  border: 1px solid ${theme.grisClaro2};
   &:hover {
     background: ${theme.grisClaro2};
   }
@@ -43,15 +44,16 @@ const SelectedOption = styled.div`
 `;
 
 const Options = styled.div`
-  background: ${theme.grisClaro};
+  background: #fff;
   position: absolute;
-  top: 5.62rem; /* 90px */
+  top: 3rem; 
   left: 0;
-  width: 60vw;
+  width: inherit;
   border-radius: 0.625rem; /* 10px */
   max-height: 18.75rem; /* 300px */
   overflow-y: auto;
   z-index: 2;
+  border: 1px solid ${theme.grisClaro};
 
   @media (max-width: 60rem) {
     /* 950px */

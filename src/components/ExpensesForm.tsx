@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Input,
   ButtonContainer,
-  BigInput,
   FilterContainer,
   Form,
 } from "../elements/FormElements";
@@ -13,9 +12,10 @@ import addExpense from "../firebase/addExpense";
 import { getUnixTime } from "date-fns";
 import useAuth from "../context/useAuth";
 import Alert from "../elements/Alert";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { ExpensesFormProps } from "../types/types";
 import editExpense from "../firebase/editExpense";
+import { Title } from "../elements/Header";
 
 const ExpensesForm = ({ expense }: ExpensesFormProps) => {
   const [descInput, changeDescInput] = useState("");
@@ -27,6 +27,7 @@ const ExpensesForm = ({ expense }: ExpensesFormProps) => {
   const [alertType, changeAlertType] = useState("error");
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (expense) {
@@ -96,55 +97,80 @@ const ExpensesForm = ({ expense }: ExpensesFormProps) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FilterContainer>
-        <CategoriesSelect category={category} changeCategory={changeCategory} />
-        <DatePicker
-          date={selectedDate}
-          changeDate={(date) => {
-            if (date) changeSelectedDate(date);
+    <>
+      {!location.pathname.includes("edit") && (
+        <Title className="mb-20 mt-0!">Add new expense</Title>
+      )}
+      <Form onSubmit={handleSubmit}>
+        <FilterContainer>
+          <label className="text-xs font-semibold pb-2" htmlFor="category">
+            Select category
+          </label>
+          <CategoriesSelect
+            category={category}
+            changeCategory={changeCategory}
+          />
+          <label className="text-xs font-semibold pb-2" htmlFor="date">
+            Select date
+          </label>
+          <DatePicker
+            date={selectedDate}
+            changeDate={(date) => {
+              if (date) changeSelectedDate(date);
+            }}
+          />
+        </FilterContainer>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "left",
           }}
-        />
-      </FilterContainer>
+        >
+          <label className="text-xs font-semibold pb-2" htmlFor="description">
+            Description
+          </label>
+          <Input
+            type="text"
+            name="description"
+            id="description"
+            value={descInput}
+            onChange={handleChange}
+          />
+          <label className="text-xs font-semibold pb-2 mt-8" htmlFor="value">
+            Amount
+          </label>
+          <Input
+            type="number"
+            name="value"
+            id="value"
+            placeholder="0.00€"
+            value={valueInput}
+            onChange={handleChange}
+          />
+        </div>
+        <ButtonContainer>
+          <Button
+            as="button"
+            to="#"
+            $color="#000"
+            $hasIcon
+            type="submit"
+            $width="20rem"
+          >
+            {expense ? "Edit" : "Add"}
+          </Button>
+        </ButtonContainer>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Input
-          type="text"
-          name="description"
-          id="description"
-          placeholder="Description"
-          value={descInput}
-          onChange={handleChange}
+        <Alert
+          $type={alertType}
+          $message={alert}
+          $alertStatus={alertStatus}
+          $changeAlertStatus={changeAlertStatus}
         />
-        <BigInput
-          type="number"
-          name="value"
-          id="value"
-          placeholder="0.00€"
-          value={valueInput}
-          onChange={handleChange}
-          style={{ border: "none" }}
-        />
-      </div>
-      <ButtonContainer>
-        <Button as="button" to="#" $primary $hasIcon type="submit">
-          {expense ? "Edit" : "Add"}
-        </Button>
-      </ButtonContainer>
-
-      <Alert
-        $type={alertType}
-        $message={alert}
-        $alertStatus={alertStatus}
-        $changeAlertStatus={changeAlertStatus}
-      />
-    </Form>
+      </Form>
+    </>
   );
 };
 

@@ -1,13 +1,6 @@
 // context/BalanceContext.ts
 import { createContext } from 'react';
-
-interface BalanceContextType {
-  balance: number;
-  totalIncome: number; // Only from budget income entries
-  totalExpenses: number; // Budget expenses + Monthly expenses combined
-  totalBudgetExpenses: number;
-  totalMonthlyExpenses: number;
-}
+import type { BalanceContextType } from '../types/types';
 
 export const BalanceContext = createContext<BalanceContextType>({
   balance: 0,

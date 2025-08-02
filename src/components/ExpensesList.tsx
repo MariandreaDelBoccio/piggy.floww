@@ -1,13 +1,11 @@
 import { Helmet } from "react-helmet-async";
 import { Header, Title } from "../elements/Header";
 import BackBtn from "../elements/BackBtn";
-import TotalBar from "./totalBar";
 import useGetExpenses from "../hooks/useGetExpenses";
 import {
   List,
   ElementList,
   Category,
-  Description,
   Value,
   Date,
   ButtonContainer,
@@ -26,10 +24,12 @@ import Button from "../elements/Button";
 import type { FbStorageExpenses } from "../types/types";
 import deleteExpense from "../firebase/deleteExpense";
 import { formatDate } from "../hooks/useFormatDate";
-import BalanceBar from "./BalanceBar";
+import useIsMobile from "../hooks/useIsMobile";
+import theme from "../theme";
 
 function ExpensesList() {
   const [expenses, getMoreExpenses, moreToLoad] = useGetExpenses();
+  const isMobile = useIsMobile();
 
   const sameDate = (
     expenses: FbStorageExpenses[],
@@ -46,64 +46,83 @@ function ExpensesList() {
 
   return (
     <>
-      <Helmet>
-        <title>Expenses list</title>
-        <link rel="icon" type="image/x-icon" href="../public/favicon.ico" />
-      </Helmet>
-      <Header>
-        <BackBtn />
-        <Title>Expenses list</Title>
-      </Header>
+      {/* Helmet solo en mobile cuando es una ruta separada */}
+      {isMobile && (
+        <Helmet>
+          <title>Expenses list</title>
+          <link rel="icon" type="image/x-icon" href="../public/favicon.ico" />
+        </Helmet>
+      )}
 
-      <List>
-        {expenses.map((expense, index) => {
-          return (
-            <div key={expense.id}>
-              {!sameDate(expenses, index, expense) && (
-                <Date>{formatDate(expense.date)}</Date>
-              )}
-              <ElementList key={expense.id}>
-                <Category>
-                  <CategoryICon id={expense.category} />
-                  {expense.category}
-                </Category>
-
-                <Description>{expense.description}</Description>
-                <Value>{formatCurrency(Number(expense.quantity))}</Value>
-
-                <ButtonContainer>
-                  <ActionButton as={Link} to={`/edit/${expense.id}`}>
-                    <EditIcon />
-                  </ActionButton>
-                  <ActionButton
-                    onClick={() => deleteExpense(expense.id as string)}
-                  >
-                    <DeleteIcon />
-                  </ActionButton>
-                </ButtonContainer>
-              </ElementList>
-            </div>
-          );
-        })}
-
-        {moreToLoad && (
-          <ContainerButtonCentral>
-            <LoadButton onClick={() => getMoreExpenses()}>Load more</LoadButton>
-          </ContainerButtonCentral>
+      <div
+        className={`border-${theme.grisClaro2} border-2 rounded-lg bg-white m-6`}
+      >
+        {/* Header y BackBtn solo en mobile */}
+        {isMobile && (
+          <Header>
+            <BackBtn />
+            <Title>Expenses list</Title>
+          </Header>
         )}
+        <List>
+          {expenses.map((expense, index) => {
+            return (
+              <div key={expense.id}>
+                {!sameDate(expenses, index, expense) && (
+                  <Date>{formatDate(expense.date)}</Date>
+                )}
+                <ElementList key={expense.id}>
+                  <div>
+                    <Category>
+                      <CategoryICon id={expense.category} />
+                    </Category>
 
-        {!expenses.length && (
-          <ContainerSubtitle>
-            <Subtitle>There are no more expenses to show</Subtitle>
-            <Button as={Link} to="/">
-              Add expenses
-            </Button>
-          </ContainerSubtitle>
-        )}
-      </List>
-    
-      <BalanceBar />
-      <TotalBar />
+                    <div className="grid">
+                      <span className="font-medium">{expense.description}</span>
+                      <span className="font-light">
+                        {expense.category.charAt(0).toUpperCase() +
+                          expense.category.substring(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Value>{formatCurrency(Number(expense.quantity))}</Value>
+
+                    <ButtonContainer className="flex">
+                      <ActionButton as={Link} to={`/edit/${expense.id}`}>
+                        <EditIcon />
+                      </ActionButton>
+                      <ActionButton
+                        onClick={() => deleteExpense(expense.id as string)}
+                      >
+                        <DeleteIcon />
+                      </ActionButton>
+                    </ButtonContainer>
+                  </div>
+                </ElementList>
+              </div>
+            );
+          })}
+
+          {moreToLoad && (
+            <ContainerButtonCentral>
+              <LoadButton onClick={() => getMoreExpenses()}>
+                Load more
+              </LoadButton>
+            </ContainerButtonCentral>
+          )}
+
+          {!expenses.length && (
+            <ContainerSubtitle>
+              <Subtitle>There are no more expenses to show</Subtitle>
+              <Button as={Link} to="/">
+                Add expenses
+              </Button>
+            </ContainerSubtitle>
+          )}
+        </List>
+      </div>
     </>
   );
 }

@@ -1,12 +1,17 @@
 import styled from "styled-components";
 import theme from "../theme";
 
+const FormContainer = styled.div`
+  border: 1px solid ${theme.grisClaro2};
+  border-radius: 0.625rem;
+`
+
 const FilterContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 1.87rem; /* 30px */
-  align-items: center;
+  align-items: flex-start;
 
   @media (max-width: 60rem) {
     /* 950px */
@@ -21,16 +26,14 @@ const FilterContainer = styled.div`
 
 const Form = styled.form`
   padding: 0 2.5rem; /* 40px */
+  align-items: center;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   input {
-    border: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    width: 50%;
     text-align: center;
-    padding: 2.5rem 0;
+    padding: 1rem 0;
     font-family: "Work Sans", sans-serif;
     &::placeholder {
       color: rgba(0, 0, 0, 0.2);
@@ -41,22 +44,20 @@ const Form = styled.form`
     /* 950px */
     justify-content: start;
     margin-top: 2rem;
-    input {
-      width: 90% !important;
-    }
   }
 `;
 
 const Input = styled.input`
-  font-size: 2.5rem; /* 40px */
-  text-transform: uppercase;
-  border: none;
-  border-bottom: 2px solid ${theme.grisClaro};
-  outline: none;
+  font-size: 1rem; 
+  border: 1px solid ${theme.grisClaro2};
+  border-radius: 0.625rem;
+  width: 20rem;
+  height: 3rem;
 
   @media (max-width: 60rem) {
     /* 950px */
     font-size: 2.2rem; /* 24px */
+    width: 100%;
   }
 `;
 
@@ -71,4 +72,4 @@ const ButtonContainer = styled.div`
   margin: 2.5rem 0; /* 40px */
 `;
 
-export { FilterContainer, Form, Input, BigInput, ButtonContainer };
+export { FilterContainer, Form, Input, BigInput, ButtonContainer, FormContainer };
