@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   collection,
   query,
@@ -45,7 +45,7 @@ const ArrowDownIcon = () => (
 
 const RefreshIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
   </svg>
 );
 
@@ -104,7 +104,8 @@ export default function HuchasList() {
   const [isBalanceExpanded, setIsBalanceExpanded] = useState(false);
   const [savingsPercentage, setSavingsPercentage] = useState(80);
 
-  const [savedSuggestedSavings, setSavedSuggestedSavings] = useState<SavedSuggestedSavings | null>(null);
+  const [savedSuggestedSavings, setSavedSuggestedSavings] =
+    useState<SavedSuggestedSavings | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false); // NUEVO: Flag para controlar inicialización
 
@@ -159,63 +160,77 @@ export default function HuchasList() {
     return suggestedSavingsByHucha[huchaId] ?? 0;
   };
 
-  // NUEVO: Función para calcular suggested savings (sin aplicarlos automáticamente)
-  const calculateSuggestedSavings = (currentBalance: number, percentage: number): Record<string, number> => {
-    const now = new Date();
-    const eligibleHuchas = huchas.filter((h) => h.remaining > 0);
-    const savingsBudget = currentBalance * (percentage / 100);
+  const calculateSuggestedSavings = useCallback(
+    (currentBalance: number, percentage: number): Record<string, number> => {
+      const now = new Date();
+      const eligibleHuchas = huchas.filter((h) => h.remaining > 0);
+      const savingsBudget = currentBalance * (percentage / 100);
 
-    const weights = eligibleHuchas.map((h, index) => {
-      const daysToDeadline = h.deadline
-        ? Math.max(
-            1,
-            Math.ceil(
-              (h.deadline.toDate().getTime() - now.getTime()) /
-                (1000 * 60 * 60 * 24),
-            ),
-          )
-        : 9999;
+      const weights = eligibleHuchas.map((h, index) => {
+        const daysToDeadline = h.deadline
+          ? Math.max(
+              1,
+              Math.ceil(
+                (h.deadline.toDate().getTime() - now.getTime()) /
+                  (1000 * 60 * 60 * 24),
+              ),
+            )
+          : 9999;
 
-      const urgencyFactor = 1 / daysToDeadline;
-      const priorityFactor = 1 / (index + 1);
+        const urgencyFactor = 1 / daysToDeadline;
+        const priorityFactor = 1 / (index + 1);
 
-      return urgencyFactor + priorityFactor;
-    });
+        return urgencyFactor + priorityFactor;
+      });
 
-    const totalWeight = weights.reduce((acc, w) => acc + w, 0);
+      const totalWeight = weights.reduce((acc, w) => acc + w, 0);
 
-    const suggestions: Record<string, number> = {};
-    eligibleHuchas.forEach((h, i) => {
-      const amount = (savingsBudget * weights[i]) / totalWeight;
-      suggestions[h.id] = Math.min(h.remaining, parseFloat(amount.toFixed(2)));
-    });
+      const suggestions: Record<string, number> = {};
+      eligibleHuchas.forEach((h, i) => {
+        const amount = (savingsBudget * weights[i]) / totalWeight;
+        suggestions[h.id] = Math.min(
+          h.remaining,
+          parseFloat(amount.toFixed(2)),
+        );
+      });
 
-    return suggestions;
-  };
+      return suggestions;
+    },
+    [huchas],
+  );
 
-  // NUEVO: Función para guardar suggested savings en Firestore
-  const saveSuggestedSavingsToFirestore = async (suggestions: Record<string, number>, baseBalance: number, percentage: number) => {
-    if (!user) return;
+  const saveSuggestedSavingsToFirestore = useCallback(
+    async (
+      suggestions: Record<string, number>,
+      baseBalance: number,
+      percentage: number,
+    ) => {
+      if (!user) return;
 
-    const savedData: SavedSuggestedSavings = {
-      suggestedSavings: suggestions,
-      baseBalance,
-      timestamp: Date.now(),
-      savingsPercentage: percentage
-    };
+      const savedData: SavedSuggestedSavings = {
+        suggestedSavings: suggestions,
+        baseBalance,
+        timestamp: Date.now(),
+        savingsPercentage: percentage,
+      };
 
-    try {
-      const userDocRef = doc(db, "users", user.uid);
-      await setDoc(userDocRef, { savedSuggestedSavings: savedData }, { merge: true });
-      setSavedSuggestedSavings(savedData);
-      setHasUnsavedChanges(false);
-    } catch (error) {
-      console.error("Error saving suggested savings:", error);
-    }
-  };
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(
+          userDocRef,
+          { savedSuggestedSavings: savedData },
+          { merge: true },
+        );
+        setSavedSuggestedSavings(savedData);
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        console.error("Error saving suggested savings:", error);
+      }
+    },
+    [user, setSavedSuggestedSavings, setHasUnsavedChanges],
+  );
 
-  // NUEVO: Función para cargar suggested savings desde Firestore
-  const loadSuggestedSavingsFromFirestore = async () => {
+  const loadSuggestedSavingsFromFirestore = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -239,40 +254,42 @@ export default function HuchasList() {
       console.error("Error loading suggested savings:", error);
       setIsInitialized(true); // En caso de error, permitimos continuar
     }
-  };
+  }, [user]) 
 
   // NUEVO: Función para recalcular y aplicar nuevos suggested savings
   const recalculateAndApplySuggestedSavings = async () => {
-    const newSuggestions = calculateSuggestedSavings(balance, savingsPercentage);
+    const newSuggestions = calculateSuggestedSavings(
+      balance,
+      savingsPercentage,
+    );
     setSuggestedSavingsByHucha(newSuggestions);
-    await saveSuggestedSavingsToFirestore(newSuggestions, balance, savingsPercentage);
+    await saveSuggestedSavingsToFirestore(
+      newSuggestions,
+      balance,
+      savingsPercentage,
+    );
   };
 
-  // NUEVO: Función para detectar si hay cambios que requieren recálculo
-  const detectUnsavedChanges = () => {
+  const detectUnsavedChanges = useCallback(() => {
     if (!savedSuggestedSavings) return true;
 
-    // Cambios en porcentaje de ahorros
-    if (savedSuggestedSavings.savingsPercentage !== savingsPercentage) {
+    if (savedSuggestedSavings.savingsPercentage !== savingsPercentage)
       return true;
-    }
+    if (savedSuggestedSavings.baseBalance !== balance) return true;
 
-    // Cambios en las huchas (nuevas huchas, huchas eliminadas, cambios en remaining)
-    const currentHuchaIds = new Set(huchas.map(h => h.id));
-    const savedHuchaIds = new Set(Object.keys(savedSuggestedSavings.suggestedSavings));
+    const currentHuchaIds = new Set(huchas.map((h) => h.id));
+    const savedHuchaIds = new Set(
+      Object.keys(savedSuggestedSavings.suggestedSavings),
+    );
 
-    if (currentHuchaIds.size !== savedHuchaIds.size) {
-      return true;
-    }
+    if (currentHuchaIds.size !== savedHuchaIds.size) return true;
 
     for (const id of currentHuchaIds) {
-      if (!savedHuchaIds.has(id)) {
-        return true;
-      }
+      if (!savedHuchaIds.has(id)) return true;
     }
 
     return false;
-  };
+  }, [savedSuggestedSavings, savingsPercentage, balance, huchas]);
 
   // Función para calcular el dinero restante después de todos los suggested savings
   const getRemainingAfterSuggested = (): number => {
@@ -356,25 +373,48 @@ export default function HuchasList() {
     });
 
     return () => unsub();
-  }, [user]);
+  }, [user, loadSuggestedSavingsFromFirestore]);
 
   // NUEVO: Effect para detectar cambios no guardados
   useEffect(() => {
     if (isInitialized && huchas.length > 0 && savedSuggestedSavings) {
       setHasUnsavedChanges(detectUnsavedChanges());
     }
-  }, [isInitialized, huchas, savingsPercentage, savedSuggestedSavings]);
+  }, [
+    isInitialized,
+    huchas,
+    savingsPercentage,
+    savedSuggestedSavings,
+    detectUnsavedChanges,
+  ]);
 
-  // NUEVO: Effect para aplicar suggested savings iniciales SOLO la primera vez
   useEffect(() => {
-    if (isInitialized && huchas.length > 0 && Object.keys(suggestedSavingsByHucha).length === 0) {
-      // Solo calculamos iniciales si ya cargamos desde Firestore y no hay suggested savings
-      const initialSuggestions = calculateSuggestedSavings(balance, savingsPercentage);
+    if (
+      isInitialized &&
+      huchas.length > 0 &&
+      Object.keys(suggestedSavingsByHucha).length === 0 &&
+      savedSuggestedSavings // Solo si hay datos guardados
+    ) {
+      setSuggestedSavingsByHucha(savedSuggestedSavings.suggestedSavings);
+      setHasUnsavedChanges(detectUnsavedChanges());
+    } else if (
+      isInitialized &&
+      huchas.length > 0 &&
+      Object.keys(suggestedSavingsByHucha).length === 0 &&
+      !savedSuggestedSavings // Si NO hay datos guardados
+    ) {
+      const initialSuggestions = calculateSuggestedSavings(
+        balance,
+        savingsPercentage,
+      );
       setSuggestedSavingsByHucha(initialSuggestions);
-      // Guardamos inmediatamente para evitar recálculos
-      saveSuggestedSavingsToFirestore(initialSuggestions, balance, savingsPercentage);
+      saveSuggestedSavingsToFirestore(
+        initialSuggestions,
+        balance,
+        savingsPercentage,
+      );
     }
-  }, [isInitialized, huchas.length]); // Solo depende de inicialización y cantidad de huchas
+  }, [isInitialized, huchas.length, savedSuggestedSavings, balance, savingsPercentage, suggestedSavingsByHucha, calculateSuggestedSavings, saveSuggestedSavingsToFirestore, detectUnsavedChanges]);
 
   const deleteHucha = async (id: string) => {
     await deleteDoc(doc(db, "huchas", id));
@@ -594,7 +634,9 @@ export default function HuchasList() {
               </h3>
 
               {/* NUEVO: Botón para recalcular suggested savings */}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
                 {hasUnsavedChanges && (
                   <button
                     onClick={recalculateAndApplySuggestedSavings}
@@ -676,7 +718,8 @@ export default function HuchasList() {
                   gap: "0.5rem",
                 }}
               >
-                ⚠️ Settings have changed. Click "Update Suggestions" to recalculate savings recommendations.
+                ⚠️ Settings have changed. Click "Update Suggestions" to
+                recalculate savings recommendations.
               </div>
             )}
 
@@ -1118,11 +1161,13 @@ export default function HuchasList() {
                           {formatCurrency(getSuggestedSaving(hucha.id))}
                         </span>
                         {hasUnsavedChanges && (
-                          <span style={{ 
-                            fontSize: "0.75rem", 
-                            color: "#f59e0b",
-                            marginLeft: "0.5rem" 
-                          }}>
+                          <span
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "#f59e0b",
+                              marginLeft: "0.5rem",
+                            }}
+                          >
                             (needs update)
                           </span>
                         )}
